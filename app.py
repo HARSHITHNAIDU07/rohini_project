@@ -157,7 +157,34 @@ def get_restaurants_by_cuisine():
         "page": page,
         "total_pages": (total_count + per_page - 1) // per_page
     })
+@app.route('/restaurants-nearby', methods=['GET'])
+def get_restaurants_nearby():
+    latitude = request.args.get('latitude', type=float)
+    longitude = request.args.get('longitude', type=float)
+    page = int(request.args.get('page', 1))
+    per_page = 5
 
+    if latitude is None or longitude is None:
+        return jsonify({"error": "Latitude and longitude parameters are required"}), 400
+
+    nearby_restaurants = []
+    for restaurant in restaurants_collection.find({}, {"_id": 0}):
+        restaurant_location = (restaurant['latitude'], restaurant['longitude'])
+        user_location = (latitude, longitude)
+        distance = geodesic(user_location, restaurant_location).km
+        if distance <= 3:
+            nearby_restaurants.append(restaurant)
+
+    total_count = len(nearby_restaurants)
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_restaurants = nearby_restaurants[start:end]
+
+    return jsonify({
+        "restaurants": paginated_restaurants,
+        "page": page,
+        "total_pages": (total_count + per_page - 1) // per_page
+    })
 if __name__ == '__main__':
     # Listen on all available interfaces
     app.run(debug=True, host="0.0.0.0")
