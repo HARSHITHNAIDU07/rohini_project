@@ -32,7 +32,7 @@ db = client["zomato_db"]
 restaurants_collection = db["restaurants"]
 
 # Configure Google Gemini AI
-genai.configure(api_key="AIzaSyBHsg2-HMmjnMwZllrRV9eQDrDYaffMH80")  # Replace with your actual API key
+genai.configure(api_key="AIzaSyBBcDOoecxuquF4h-QVmmkb8l8ujIQrG3I")  # Replace with your actual API key
 
 # Get restaurant list with pagination by city
 @app.route('/restaurants', methods=['GET'])
